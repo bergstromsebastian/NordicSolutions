@@ -1,18 +1,39 @@
-# Salesforce DX Project: Next Steps
+# MySFProject / Nordic Solutions
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+## Overview
+This Salesforce DX project contains the metadata for my assignment. It includes an expanded custom data model as well as a Flow automation as defined in the assignment.
 
-## How Do You Plan to Deploy Your Changes?
+## Data Model Design
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+- Custom object "Subscription" 
+- I went with a completely separate custom object to create and track the subscriptions. I feel that this approach is more scalable and customizable in the future and it is more clear because it has a direct clear purpose from a business perspective and even for supposed end users.
+- Another reasoning for the custom object which is also related to scalability, is that technically the fields can be added to the Opportunity Product object, however, these fields would then always be present with other products which may have no need of the fields related to these subscriptions.
+- The Subscription object consits of two Date fields: 'Start Date' & 'End Date', and a picklist field with the values 'Trial', 'Active' and 'Expired'.
+- The Opportunity Product contains a lookup relationship field to the Subscription object.
+    - This allows the Subscription record to be displayed fields of the Opportunity Product's related list on  the opportunity object (as shown in the screenshot: "https://ibb.co/rKc0hqT9") which can be cliked to directly navigate to the Subscription record. The lookup relationship was also used due to the fact that the "Opportunity Product" object does not allow for Master-Detail relationships.
+- Another reasoning for this is that if a user adds a Opportunity Product manually, they can then edit the Opportunity Product from the list view, and in the edit window they can create a new Subscription record to link to the product, without ever having to leave the Opportunity record page.
 
-## Configure Your Salesforce DX Project
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+## Flow Design
+The project also includes a record triggered flow 'Opportunity After Save Flow'.
 
-## Read All About It
+- The flow runs after being created, without any start conditions currently.
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+- The first step of the Flow is a decision element, where it checks the value of the 'Type' field.
+
+- For 'Type' value 'New Business'
+    - The automation creates a Subscription record
+    - Gets the Price Book Entry record for the product name'Analytics Suite'.
+    - Gets the Product record for the product name 'Analytics Suite'.
+    - Creates the Opportunity Product with assigned values and links it to the triggering Opportunity record.
+
+- For 'Type' value 'New Business'
+-   Gets the most recent 'Close Date' value from the Account linked to the Opportunity utilizing a roll up field on the Account for the 'Closed Won' on related Opportunities.
+-   Gets the Opportunity Product records from the most recent won Opportunity
+-   Loops through all the prodcuts on that Opportunity, Creates Subscription records and adds it to the Opportunity Product, then creates the Opportunity Products through a collection variable.
+
+- For the default outcome of this decision
+    - The automation creates a Task linked to the Opportunity, assigned to the Owner of the triggering Opportunity, with a due date and reminder set one week from current date.
+
+
+- Location of flow: `force-app/main/default/flows/`

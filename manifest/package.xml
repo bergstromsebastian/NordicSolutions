@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Custom objects (data model) -->
+    <types>
+        <members>*</members>
+        <name>CustomObject</name>
+    </types>
+
+ <!-- Custom fields on standard objects -->
+    <types>
+    <members>OpportunityLineItem.Subscription__c</members>
+    <name>CustomField</name>
+    </types>
+
+    <!-- Flows -->
+    <types>
+    <members>Opportunity_After_Save_Flow</members>
+    <name>Flow</name>
+    </types>
+
+     <!-- Page layouts -->
+    <types>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>OpportunityLineItem-Opportunity Product Layout</members>
+        <name>Layout</name>
+    </types>
+
+    <version>60.0</version>
+</Package>
